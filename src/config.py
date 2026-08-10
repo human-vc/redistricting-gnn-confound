@@ -1,0 +1,54 @@
+from __future__ import annotations
+
+import numpy as np
+import torch
+
+GLOBAL_SEED = 42
+
+N_PRECINCTS_ALPHA = 450
+N_PRECINCTS_BETA = 400
+N_DISTRICTS_ALPHA = 8
+N_DISTRICTS_BETA = 7
+
+POP_EPSILON = 0.05
+REAL_POP_EPSILON = 0.02
+
+CHAIN_BURN_IN = 400
+CHAIN_STEPS = 6000
+CHAIN_THIN = 12
+RECOM_MAX_TREE_ATTEMPTS = 60
+
+PLANTS_PER_CONDITION = 60
+STRIP_SIZE_MIN = 4
+STRIP_SIZE_MAX = 10
+
+PLANT_EPSILON = 0.12
+
+DENSITY_CONTRAST_MIN_Z = 0.25
+DENSITY_NEUTRAL_MAX_Z = 0.5
+
+N_VOTE_SHUFFLES = 500
+N_BOOTSTRAP = 2000
+N_PERMUTATION = 2000
+
+GNN_HIDDEN = 64
+GNN_LAYERS = 3
+GNN_EPOCHS = 200
+GNN_PATIENCE = 25
+GNN_LR = 1e-3
+GNN_WEIGHT_DECAY = 1e-5
+N_MODEL_SEEDS = 3
+
+THRESH_CFP_PERCENTILE = 0.99
+THRESH_LOCALIZATION_ALPHA = 0.05
+THRESH_SPEARMAN_HIGH = 0.80
+THRESH_SHUFFLE_RATIO_SMALL = 0.10
+
+FIGURES_DIR = "outputs/figures"
+TABLES_DIR = "outputs/tables"
+LOGS_DIR = "outputs/logs"
+
+def seed_everything(seed: int = GLOBAL_SEED) -> np.random.Generator:
+    rng = np.random.default_rng(seed)
+    torch.manual_seed(seed)
+    return rng
