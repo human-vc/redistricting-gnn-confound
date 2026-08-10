@@ -1,0 +1,30 @@
+% Shared figure preamble: Okabe-Ito colorblind palette + Tufte-aligned
+% pgfplots style, sized for an IEEE two-column single-column figure.
+% \input this in the main document's preamble.
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,fit,backgrounds}
+
+% Okabe-Ito (colorblind-safe, legible in greyscale)
+\definecolor{cGREY}{HTML}{999999}
+\definecolor{cBLU}{HTML}{0072B2}
+\definecolor{cORG}{HTML}{D55E00}
+\definecolor{cGRN}{HTML}{009E73}
+\definecolor{cPNK}{HTML}{CC79A7}
+\definecolor{cSKY}{HTML}{56B4E9}
+\definecolor{cYEL}{HTML}{E69F00}
+\definecolor{cMUTE}{HTML}{BBBBBB}
+
+\pgfplotsset{
+  urtc/.style={
+    axis lines*=left, tick align=outside, tick pos=left,
+    title style={font=\small}, label style={font=\small},
+    tick label style={font=\scriptsize},
+    legend style={font=\scriptsize, draw=none, fill=none, row sep=-1pt},
+    legend cell align=left,
+    every axis plot/.append style={thick},
+    width=\columnwidth, height=4.8cm,
+  },
+}
