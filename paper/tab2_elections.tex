@@ -1,0 +1,29 @@
+% Table II: multi-election robustness. How often each classical statistic flags
+% the enacted plan as an outlier across all available statewide races, vs the
+% geometry detector's single election-invariant verdict.
+\begin{table}[t]
+\caption{Multi-election robustness. Fraction of statewide races under which
+each vote-based statistic flags the enacted plan as an outlier (beyond the
+99th ensemble percentile), against the topology-only detector, whose verdict
+consumes no vote data and so does not vary with the election.}
+\label{tab:elections}
+\centering
+\footnotesize
+\begin{tabular}{lcccc c}
+\toprule
+ & mean & efficiency & & & geometry \\
+State & median & gap & declin. & lean & $p$ \\
+\midrule
+NC (R) & 5/5 & 4/5 & 4/5 & 0.49 & 0.36 \\
+PA (R) & 4/9 & 3/9 & 4/9 & 0.52 & \textbf{0.009} \\
+MD (D) & 0/6 & 2/6 & 4/6 & 0.55 & \textbf{0.016} \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\scriptsize Fractions are flagged races over available races. ``lean'' is the
+mean statewide two-party Democratic share. ``geometry $p$'' is the topology-only
+detector's $\varepsilon$-outlier $p$-value (one value per state, election-invariant);
+bold marks $p<0.05$. Mean-median flags the clear Republican gerrymander (NC)
+everywhere and the lopsided Democratic gerrymander (MD) nowhere.}
+\end{table}

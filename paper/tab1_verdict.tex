@@ -1,0 +1,27 @@
+% Table I: the outlier verdict spine. Extreme percentile of the enacted plan
+% vs the neutral ensemble (2016 presidential vote), one ensemble per state.
+% GNN row is the CFP epsilon-outlier percentile (100(1-p/2)).
+\begin{table}[t]
+\caption{Outlier verdict: extreme percentile of each enacted plan against its
+neutral ensemble under the 2016 presidential vote. Bold marks a flag beyond the
+99th percentile. Vote-based statistics flag the vote-packed North Carolina map;
+the geometry-based detectors flag the shape-distorted Pennsylvania and Maryland
+maps. No single detector flags all three.}
+\label{tab:verdict}
+\centering
+\footnotesize
+\begin{tabular}{lccc}
+\toprule
+Detector & NC (R) & PA (R) & MD (D) \\
+\midrule
+\multicolumn{4}{l}{\itshape vote-based} \\
+\quad mean--median   & \textbf{99.8} & 64.9          & 67.5 \\
+\quad efficiency gap & \textbf{100}  & 96.1          & \textbf{100} \\
+\quad declination    & \textbf{100}  & 91.6          & \textbf{100} \\
+\midrule
+\multicolumn{4}{l}{\itshape geometry-based} \\
+\quad cut edges      & 57.4          & \textbf{100}  & \textbf{100} \\
+\quad GNN score      & 82.0          & \textbf{99.6} & \textbf{99.2} \\
+\bottomrule
+\end{tabular}
+\end{table}
