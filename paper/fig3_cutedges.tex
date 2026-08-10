@@ -1,0 +1,37 @@
+% Fig 3: cut-edge mechanism. Ensemble cut-edge distribution per state (grey
+% histogram) with the enacted plan marked (orange line). The field-standard
+% ensemble-validity / compactness figure, doubling as the "why" for Fig 2.
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  urtc, height=2.7cm, width=\columnwidth,
+  group style={group size=1 by 3, vertical sep=7mm},
+  ytick=\empty, ylabel={},
+  every axis title/.style={at={(0.02,0.94)}, anchor=north west, font=\scriptsize},
+]
+\nextgroupplot[title={NC: enacted in the bulk (57th pctile)}, xmin=600, xmax=945,
+  title style={at={(0.98,0.94)}, anchor=north east, font=\scriptsize}]
+\addplot+[hist={bins=22}, fill=cMUTE!55, draw=cGREY!70, mark=none, forget plot]
+  table[y=cut_edges, col sep=comma]{ensemble_NC.csv};
+\draw[cORG, very thick] (axis cs:749,0) -- (axis cs:749,200);
+
+\nextgroupplot[title={PA: enacted past the tail ($+5.8\sigma$)}, xmin=1500, xmax=2450]
+\addplot+[hist={bins=22}, fill=cMUTE!55, draw=cGREY!70, mark=none, forget plot]
+  table[y=cut_edges, col sep=comma]{ensemble_PA.csv};
+\draw[cORG, very thick] (axis cs:2367,0) -- (axis cs:2367,200);
+
+\nextgroupplot[title={MD: enacted past the tail ($+13\sigma$)}, xmin=230, xmax=830, xlabel={cut edges (enacted plan, orange)}]
+\addplot+[hist={bins=22}, fill=cMUTE!55, draw=cGREY!70, mark=none, forget plot]
+  table[y=cut_edges, col sep=comma]{ensemble_MD.csv};
+\draw[cORG, very thick] (axis cs:777,0) -- (axis cs:777,200);
+\end{groupplot}
+\end{tikzpicture}
+\caption{The cut-edge mechanism. Grey: the distribution of cut edges (dual-graph
+edges crossing a district boundary, the discrete compactness statistic a GIN is
+sensitive to) over each state's neutral ensemble. Orange: the enacted plan. North
+Carolina's enacted plan sits in the body of its distribution, so the geometry
+detector correctly sees nothing anomalous; Pennsylvania's and Maryland's lie far
+beyond their ensemble tails, which is why the topology-only detector flags them.}
+\label{fig:cutedges}
+\end{figure}
