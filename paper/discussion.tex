@@ -1,0 +1,126 @@
+% Discussion section for the confound-isolated GNN redistricting-outlier paper.
+% Drop-in: \input{discussion} from the main document; uses references.bib.
+% Prose grounded in the 2026-08-09 mechanism research pass; every empirical
+% number traces to outputs_real_{NC,PA,MD}/ and outputs_why/.
+
+\section{Discussion: why the detectors disagree}
+\label{sec:discussion}
+
+Across three enacted congressional plans our learned geometric detector and
+the classical vote-asymmetry statistics disagree in a patterned way, and the
+pattern has a single mechanistic source. A partisan advantage can be built two
+ways. Cracking distributes an opponent's voters across many districts by
+threading boundaries through scattered pockets of support, and packing
+concentrates them into a few districts, often by exploiting voters who already
+live in compact clusters. Cracking distorts district shape and severs
+adjacency, whereas packing a naturally clustered population requires little or
+no boundary distortion. A detector that reads only geometry is therefore
+sensitive to the first mechanism and blind to the second, and this asymmetry
+organizes every result below.
+
+\paragraph{Geometry detects cracking and is blind to packing.}
+The topology-only model flags Pennsylvania's 2011 plan ($p=0.009$) and
+Maryland's 2011 plan ($p=0.016$) but not North Carolina's ($p=0.36$), and a
+direct compactness audit against each state's neutral ensemble explains why.
+Measured by cut edges, the number of dual-graph edges severed by district
+boundaries and the quantity a message-passing network is most directly
+sensitive to, the Pennsylvania plan sits at the ensemble maximum ($+5.8$
+standard deviations) and the Maryland plan carries more than double the cut
+edges of any neutral map ($+13$ standard deviations), while North Carolina's
+plan is entirely typical (the $42.6$th percentile) and is in fact more compact
+than the neutral ensemble on the Polsby--Popper score. Cut edges and
+contour-based compactness are properties of how a boundary encloses area,
+independent of which voters live inside it \cite{duchin2023discrete,
+validi2022cutedges}, and a compact map can nonetheless be a severe partisan
+gerrymander: Alexeev and Mixon prove a party can win supermajorities of seats
+while every district remains geometrically compact \cite{alexeev2018partisan},
+and compactness scores are unstable to fairness-irrelevant implementation
+choices and can be gamed so that gerrymandered districts appear reasonable
+\cite{barnes2021gerrymandering, polsby1991third}. North Carolina's advantage is
+obtained by packing opposition voters into already-compact urban clusters, so
+its plan leaves no geometric signature and the shape detector correctly reports
+nothing; Pennsylvania's and Maryland's advantages depend on boundary
+distortion, which places them in the tail of the geometric null. The detector
+is thus complementary to, not a replacement for, vote-based statistics: it sees
+the cracking mechanism they can miss and is silent on the packing mechanism
+only they can see.
+
+\paragraph{Vote-asymmetry statistics fail under a lopsided baseline.}
+The mean--median difference flags North Carolina under all five available
+statewide elections, Pennsylvania under four of nine, and Maryland under none
+of six, and the failure tracks each state's statewide partisan balance
+(two-party Democratic shares of $0.465$, $0.527$, and $0.609$). The statistic
+is by construction insensitive to any reallocation of votes among same-side
+districts that leaves the median district unchanged \cite{warrington2018quantifying},
+which is precisely Maryland's configuration: a wall of safe but not
+overwhelming Democratic seats, the structure that vote-asymmetry measures are
+known to miss \cite{nagle2020unbalanced}. This is not incidental to the
+statistic but intrinsic to it. Its interpretation as a bias signal is inherited
+from a uniform-partisan-swing counterfactual \cite{katz2020theoretical}, and
+DeFord and Veomett prove that the achievable range of mean--median and related
+symmetry scores collapses as the statewide vote moves away from parity, so
+under a sufficiently lopsided baseline the statistic cannot register an extreme
+seat outcome regardless of how gerrymandered the map is \cite{deford2024bounds}.
+An ensemble study using the same recombination sampler we adopt finds the same
+degradation empirically, with mean--median distinguishing seat extremes far
+better in a balanced state than a lopsided one \cite{deford2021implementing,
+deford2021recombination}. Declination, which normalizes each party's average
+winning margin by its own seat share rather than comparing raw shares to a fixed
+threshold, is more robust to this failure \cite{warrington2018comparison} and
+in our sweep recovers Maryland under four of six elections where mean--median
+recovers none.
+
+\paragraph{Confounded features act as a shortcut and degrade the model.}
+Supplying the network with density, minority voting-age-population share, and
+Democratic vote share as node features makes it worse, not better. The
+augmented variant becomes $15$ to $72$ times more sensitive to a vote-share
+label shuffle than the exactly invariant topology-only variant, and its
+node-level localization collapses below chance on Maryland ($\mathrm{AUC}=0.49$)
+where the topology-only variant succeeds ($\mathrm{AUC}=0.62$ to $0.74$).
+Simplicity-biased optimization preferentially fits the simplest predictive
+feature and remains invariant to more complex but equally predictive signal
+\cite{shah2020simplicity, geirhos2020shortcut}, so the model latches onto the
+vote-share correlate rather than integrating the structural signal; because that
+correlate is spurious with respect to the redistricting mechanism, the reliance
+sharpens with the feature's signal strength \cite{sagawa2020overparameterization}
+and induces the out-of-distribution collapse observed when the model is asked to
+generalize to a new state's geometry \cite{sagawa2020distributionally,
+nagarajan2021failure}. The demographic augmentation is the settlement-density
+confound entering the model directly, and the topology-only design is what keeps
+the detector reading geometry rather than shortcutting through it.
+
+\paragraph{A pooled score dilutes a localized anomaly.}
+The plan-level anomaly score misses North Carolina ($p=0.36$) even though the
+node-level readout on the same plan recovers its packed and cracked precincts.
+Graph-level and node-level anomaly detection are distinct tasks precisely
+because a single pooled statistic cannot preserve an anomaly confined to a small
+subset of nodes \cite{ma2023survey}, which is the reason the distillation
+objective we build on carries both a node-level and a graph-level term
+\cite{ma2021glocalkd}. Aggregating per-node discrepancy into one plan score
+averages a handful of packed precincts together with hundreds of ordinary ones,
+driving the anomalous contribution toward the mean by the same
+convergence-to-a-shared-value dynamic formalized for oversmoothing
+\cite{rusch2023oversmoothing}; more generally, aggregate metrics are known to
+hide failures visible only within a specific coherent subset
+\cite{salaudeen2025aggregation}. The node-level readout acts before this
+dilution, which is why localization succeeds where the pooled verdict does not.
+
+\paragraph{Implications and limitations.}
+Taken together the results position the learned geometric score as a third
+family of ensemble-position tests, complementary to the vote-asymmetry
+statistics and to hand-built geometric distances, that is sensitive to the
+cracking-and-distortion mechanism and stable across elections because it never
+consumes vote data. Its complementarity is exactly its limitation: it misses
+North Carolina's packing-based gerrymander, and no single detector in our study
+flags all three plans, which is itself an argument against reliance on any one
+metric \cite{warrington2018comparison, deford2024bounds} and for reporting a
+panel of geometric and vote-based ensemble tests together. Two points of legal
+provenance deserve care. The Pennsylvania outlier analysis submitted in
+\emph{League of Women Voters v.\ Commonwealth} concerned a remedial proposal
+rather than the 2011 enacted plan our data encode, so we cite it for methodology
+and for Pennsylvania's litigation history rather than as evidence about our
+specific map. The Maryland plan we analyze is the 2011 congressional map whose
+sixth district was the partisan-gerrymander claim in \emph{Lamone v.\ Benisek},
+decided in \emph{Rucho v.\ Common Cause}; the third district, the ``praying
+mantis,'' is geometrically notorious but was not itself adjudicated on shape
+grounds, and we treat it accordingly.
