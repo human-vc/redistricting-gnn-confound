@@ -2,15 +2,14 @@ from __future__ import annotations
 
 import os
 import pickle
-import sys
 
 import networkx as nx
 import numpy as np
 
 from synthetic_state import SyntheticState
 
-_SIBLING_SRC = os.path.expanduser("~/redistricting-confound-gnn/src")
-_CACHE_DIR = os.path.expanduser("~/redistricting-gnn-confound/cache")
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_CACHE_DIR = os.path.join(_ROOT, "cache")
 
 ELECTION_PANELS = {
     "NC": [
@@ -69,24 +68,14 @@ def _connect_components(graph) -> int:
         added += 1
 
 def _load_real_graph(postal: str):
-    if _SIBLING_SRC not in sys.path:
-        sys.path.insert(0, _SIBLING_SRC)
     from gerrychain import Graph
-    from rgnn_data.config import STATE_CONFIGS
-    from rgnn_data.graph_io import load_repaired_geodataframe
+    from state_data import STATE_CONFIGS, load_repaired_geodataframe
 
     config = STATE_CONFIGS[postal]
-
-    sibling_root = os.path.dirname(_SIBLING_SRC)
-    prev = os.getcwd()
-    try:
-        os.chdir(sibling_root)
-        gdf = load_repaired_geodataframe(config)
-        graph = Graph.from_geodataframe(
-            gdf, adjacency="rook", cols_to_add=config.cols_to_add, reproject=False, ignore_errors=False
-        )
-    finally:
-        os.chdir(prev)
+    gdf = load_repaired_geodataframe(config, _ROOT)
+    graph = Graph.from_geodataframe(
+        gdf, adjacency="rook", cols_to_add=config.cols_to_add, reproject=False, ignore_errors=False
+    )
 
     for u, v in config.enacted_plan_fix_edges:
         if graph.has_node(u) and graph.has_node(v) and not graph.has_edge(u, v):
