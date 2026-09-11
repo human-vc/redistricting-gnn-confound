@@ -20,15 +20,15 @@ TABLES = {
         ("efficiency gap", "100", "98.7", "100"),
         ("declination", "100", "95.7", "100"),
         ("cut edges", "53.7", "100", "100"),
-        ("GNN score", "82.0", "99.6", "99.2")],
+        ("GNN score", "82.1", "99.6", "99.2")],
         "Extreme percentile of each enacted plan against one neutral ensemble (2016 presidential vote); 99 is the flag threshold. Rows 1–3 are vote-based, rows 4–5 geometry-based.",
         [Inches(1.45), Inches(0.63), Inches(0.63), Inches(0.63)]),
     "TABLE_II": ("TABLE II.  Multi-Election Robustness",
-        ["State", "mean–med.", "eff. gap", "declin.", "lean", "geom. p"], [
+        ["State", "mean–med.", "eff. gap", "declin.", "lean", "geom."], [
         ("NC (R)", "5/5", "4/5", "4/5", "0.49", "0.36"),
         ("PA (R)", "4/9", "3/9", "4/9", "0.52", "0.009"),
         ("MD (D)", "0/6", "2/6", "4/6", "0.55", "0.016")],
-        "Fraction of statewide races under which each vote statistic flags the enacted plan beyond the 99th percentile. “lean” is the mean two-party Democratic share; “geom. p” is the topology-only detector's election-invariant outlier p-value.",
+        "Fraction of statewide races under which each vote statistic flags the enacted plan beyond the 99th percentile. “lean” is the mean two-party Democratic share; “geom.” is the topology-only score's two-sided ensemble tail fraction.",
         [Inches(0.55), Inches(0.68), Inches(0.55), Inches(0.55), Inches(0.45), Inches(0.55)]),
 }
 
