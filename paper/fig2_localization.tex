@@ -1,6 +1,3 @@
-% Fig 2: confound-isolation node-localization AUC. Topology-only vs
-% +demographic, on decorrelated and correlated planted sets, three states,
-% against the degree-null band. Dot/forest plot (not bars), his convention.
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
@@ -13,16 +10,13 @@
   y tick label style={font=\small},
   legend style={at={(0.5,-0.30)}, anchor=north, legend columns=2, font=\scriptsize},
 ]
-% degree-null band (range of null AUC across conditions) + chance line
 \draw[fill=cMUTE!30, draw=none] (axis cs:0.46,0.55) rectangle (axis cs:0.575,3.55);
 \draw[dashed, cGREY, thick] (axis cs:0.5,0.55) -- (axis cs:0.5,3.55);
 \node[font=\scriptsize, cGREY, anchor=south] at (axis cs:0.5175,3.30) {null};
-% topology-only (blue): correlated = filled square, decorrelated = filled circle
 \addplot[only marks, cBLU, mark=square*, mark size=2pt] coordinates {(0.622,3.18)(0.775,2.18)(0.738,1.18)};
 \addlegendentry{topology, cracked}
 \addplot[only marks, cBLU, mark=*, mark size=2pt] coordinates {(0.584,3.06)(0.694,2.06)(0.625,1.06)};
 \addlegendentry{topology, decorr.}
-% +demographic (orange): open marks
 \addplot[only marks, cORG, mark=square, mark size=2pt] coordinates {(0.589,2.94)(0.724,1.94)(0.485,0.94)};
 \addlegendentry{+demo, cracked}
 \addplot[only marks, cORG, mark=o, mark size=2pt] coordinates {(0.582,2.82)(0.564,1.82)(0.498,0.82)};
