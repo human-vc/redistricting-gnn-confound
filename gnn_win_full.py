@@ -16,6 +16,8 @@ torch.set_num_threads(int(os.environ.get("THREADS", max(1, (os.cpu_count() or 4)
 EPS = 1e-6
 sb = cfg.GLOBAL_SEED
 NSEEDS = int(os.environ.get("NSEEDS", "1"))
+STATES = os.environ.get("STATES", "NC,PA,MD").split(",")
+SUPERVISED = os.environ.get("SUPERVISED", "1") == "1"
 
 def fused_forward(model, state, assignments, A, std):
 
@@ -31,7 +33,7 @@ def fused_forward(model, state, assignments, A, std):
 def zc(x):
     return (x - x.mean()) / (x.std() + EPS)
 
-for postal in ["NC", "PA", "MD"]:
+for postal in STATES:
     state, enacted = load_real_state(postal)
     n = state.n_precincts
     eu, ev, _, _ = feat._edge_arrays(state)
@@ -101,20 +103,23 @@ for postal in ["NC", "PA", "MD"]:
                           "cutedge_raw": ce, "cutedge_cond": (ce - muCE) / sdCE}
                     for m in methods:
                         aucs[m].append(roc_auc_score(y, sc[m]))
-                    sup_X.append(np.column_stack([Hs[b], (Hs[b] - muHs) / sdHs, bf, (bf - muBF) / sdBF]))
-                    sup_y.append(y); sup_grp.append(np.full(n, i + b))
+                    if SUPERVISED:
+                        sup_X.append(np.column_stack([Hs[b], (Hs[b] - muHs) / sdHs, bf, (bf - muBF) / sdBF]))
+                        sup_y.append(y); sup_grp.append(np.full(n, i + b))
 
-            Xs = np.vstack(sup_X); ys = np.concatenate(sup_y); gs = np.concatenate(sup_grp)
-            sup_auc = []
-            for tr, te in GroupKFold(n_splits=5).split(Xs, ys, gs):
-                clf = LogisticRegression(max_iter=200).fit(Xs[tr], ys[tr])
-                p = clf.predict_proba(Xs[te])[:, 1]
-                for g in np.unique(gs[te]):
-                    m = gs[te] == g
-                    if 0 < ys[te][m].sum() < m.sum():
-                        sup_auc.append(roc_auc_score(ys[te][m], p[m]))
             row = {m: float(np.mean(aucs[m])) for m in methods}
-            row["supervised_cv"] = float(np.mean(sup_auc))
+            row["supervised_cv"] = float("nan")
+            if SUPERVISED:
+                Xs = np.vstack(sup_X); ys = np.concatenate(sup_y); gs = np.concatenate(sup_grp)
+                sup_auc = []
+                for tr, te in GroupKFold(n_splits=5).split(Xs, ys, gs):
+                    clf = LogisticRegression(max_iter=200).fit(Xs[tr], ys[tr])
+                    p = clf.predict_proba(Xs[te])[:, 1]
+                    for g in np.unique(gs[te]):
+                        m = gs[te] == g
+                        if 0 < ys[te][m].sum() < m.sum():
+                            sup_auc.append(roc_auc_score(ys[te][m], p[m]))
+                row["supervised_cv"] = float(np.mean(sup_auc))
             sd = {m: float(np.std(aucs[m])) for m in methods}
             per_seed[condition].append(row)
             print(f"[{postal}] seed{s} {condition}: " + "  ".join(f"{k}={row[k]:.3f}(sd{sd.get(k, 0.0):.2f})" for k in methods + ["supervised_cv"]), flush=True)
