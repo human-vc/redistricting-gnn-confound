@@ -123,6 +123,11 @@ newsec.top_margin = Inches(0.75); newsec.bottom_margin = Inches(1.0)
 newsec.left_margin = Inches(0.62); newsec.right_margin = Inches(0.62)
 set_cols(newsec, 2)
 
+first = doc.sections[0]
+first.different_first_page_header_footer = True
+fr = first.first_page_footer.paragraphs[0].add_run("979-8-3195-2794-3/26/$31.00 ©2026 IEEE")
+fr.font.size = Pt(8); fr.font.name = "Times New Roman"
+
 for b in blocks[1:]:
     flat = re.sub(r"\s+", " ", b).strip()
     m = re.match(r"^\[\[(\w+)\]\]$", b.strip())
