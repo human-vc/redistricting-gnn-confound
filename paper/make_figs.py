@@ -8,17 +8,17 @@ import numpy as np
 import pandas as pd
 
 rcParams.update({"font.family": "serif", "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
-                 "font.size": 8, "axes.linewidth": 0.6, "figure.dpi": 300})
+                 "font.size": 8, "axes.linewidth": 0.6, "figure.dpi": 300, "mathtext.fontset": "stix"})
 OUT = "paper/figs_png"; os.makedirs(OUT, exist_ok=True)
 W = 3.4
 BLUE = "#4C72B0"; RED = "#C44E52"; GRAY = "#888"; LGRAY = "#aaa"
 STATES = ["NC", "PA", "MD"]
-ROOT = os.path.expanduser("~/redistricting-gnn-confound")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 AUC = {
-    "NC": {"learned": (0.873, 0.855), "hand": (0.826, 0.787)},
-    "PA": {"learned": (0.905, 0.953), "hand": (0.830, 0.883)},
-    "MD": {"learned": (0.792, 0.833), "hand": (0.783, 0.841)},
+    "NC": {"learned": (0.868, 0.849), "hand": (0.826, 0.787)},
+    "PA": {"learned": (0.900, 0.953), "hand": (0.830, 0.883)},
+    "MD": {"learned": (0.789, 0.846), "hand": (0.783, 0.841)},
 }
 fig, ax = plt.subplots(figsize=(W, 2.4))
 ypos = {"NC": 3, "PA": 2, "MD": 1}
@@ -41,9 +41,9 @@ ax.legend(handles=leg, fontsize=6, frameon=False, ncol=2, loc="lower center", bb
 fig.tight_layout(); fig.savefig(f"{OUT}/fig2_localization.png", bbox_inches="tight"); plt.close()
 
 enacted = {"NC": 749, "PA": 2367, "MD": 777}
-titles = {"NC": "NC: enacted in the bulk (57th pctile)",
+titles = {"NC": "NC: enacted in the bulk",
           "PA": r"PA: enacted past the tail ($+5.8\sigma$)",
-          "MD": r"MD: enacted past the tail ($+13\sigma$)"}
+          "MD": r"MD: enacted past the tail ($+13.7\sigma$)"}
 fig, axes = plt.subplots(3, 1, figsize=(W, 3.3))
 for ax, s in zip(axes, STATES):
     ce = pd.read_csv(f"{ROOT}/paper/ensemble_{s}.csv")["cut_edges"].values
